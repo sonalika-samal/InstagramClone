@@ -10,15 +10,15 @@ const upload = require("./multer");
 const utils = require("../utils/utils");
 
 // GET
-router.get("https://instagramclone-1.onrender.com/", function (req, res) {
+router.get("/", function (req, res) {
   res.render("index", { footer: false });
 });
 
-router.get("https://instagramclone-1.onrender.com/login", function (req, res) {
+router.get("/login", function (req, res) {
   res.render("login", { footer: false });
 });
 
-router.get("https://instagramclone-1.onrender.com/like/:postid", async function (req, res) {
+router.get("/like/:postid", async function (req, res) {
   const post = await postModel.findOne({ _id: req.params.postid });
   const user = await userModel.findOne({ username: req.session.passport.user });
   if (post.like.indexOf(user._id) === -1) {
@@ -30,7 +30,7 @@ router.get("https://instagramclone-1.onrender.com/like/:postid", async function 
   res.json(post);
 });
 
-router.get("https://instagramclone-1.onrender.com/feed", isLoggedIn, async function (req, res) {
+router.get("/feed", isLoggedIn, async function (req, res) {
   let user = await userModel
     .findOne({ username: req.session.passport.user })
     .populate("posts");
@@ -58,7 +58,7 @@ router.get("https://instagramclone-1.onrender.com/feed", isLoggedIn, async funct
   });
 });
 
-router.get("https://instagramclone-1.onrender.com/profile", isLoggedIn, async function (req, res) {
+router.get("/profile", isLoggedIn, async function (req, res) {
   let user = await userModel
     .findOne({ username: req.session.passport.user })
     .populate("posts")
@@ -68,11 +68,11 @@ router.get("https://instagramclone-1.onrender.com/profile", isLoggedIn, async fu
   res.render("profile", { footer: true, user });
 });
 
-router.get("https://instagramclone-1.onrender.com/profile/:user", isLoggedIn, async function (req, res) {
+router.get("/profile/:user", isLoggedIn, async function (req, res) {
   let user = await userModel.findOne({ username: req.session.passport.user });
 
   if (user.username === req.params.user) {
-    res.redirect("https://instagramclone-1.onrender.com/profile");
+    res.redirect("/profile");
   }
 
   let userprofile = await userModel
@@ -82,7 +82,7 @@ router.get("https://instagramclone-1.onrender.com/profile/:user", isLoggedIn, as
   res.render("userprofile", { footer: true, userprofile, user });
 });
 
-router.get("https://instagramclone-1.onrender.com/follow/:userid", isLoggedIn, async function (req, res) {
+router.get("/follow/:userid", isLoggedIn, async function (req, res) {
   let followKarneWaala = await userModel.findOne({
     username: req.session.passport.user,
   });
@@ -106,12 +106,12 @@ router.get("https://instagramclone-1.onrender.com/follow/:userid", isLoggedIn, a
   res.redirect("back");
 });
 
-router.get("https://instagramclone-1.onrender.com/search", isLoggedIn, async function (req, res) {
+router.get("/search", isLoggedIn, async function (req, res) {
   let user = await userModel.findOne({ username: req.session.passport.user });
   res.render("search", { footer: true, user });
 });
 
-router.get("https://instagramclone-1.onrender.com/save/:postid", isLoggedIn, async function (req, res) {
+router.get("/save/:postid", isLoggedIn, async function (req, res) {
   let user = await userModel.findOne({ username: req.session.passport.user });
 
   if (user.saved.indexOf(req.params.postid) === -1) {
@@ -124,7 +124,7 @@ router.get("https://instagramclone-1.onrender.com/save/:postid", isLoggedIn, asy
   res.json(user);
 });
 
-router.get("https://instagramclone-1.onrender.com/search/:user", isLoggedIn, async function (req, res) {
+router.get("/search/:user", isLoggedIn, async function (req, res) {
   const searchTerm = `^${req.params.user}`;
   const regex = new RegExp(searchTerm);
 
@@ -133,17 +133,17 @@ router.get("https://instagramclone-1.onrender.com/search/:user", isLoggedIn, asy
   res.json(users);
 });
 
-router.get("https://instagramclone-1.onrender.com/edit", isLoggedIn, async function (req, res) {
+router.get("/edit", isLoggedIn, async function (req, res) {
   const user = await userModel.findOne({ username: req.session.passport.user });
   res.render("edit", { footer: true, user });
 });
 
-router.get("https://instagramclone-1.onrender.com/upload", isLoggedIn, async function (req, res) {
+router.get("/upload", isLoggedIn, async function (req, res) {
   let user = await userModel.findOne({ username: req.session.passport.user });
   res.render("upload", { footer: true, user });
 });
 
-router.post("https://instagramclone-1.onrender.com/update", isLoggedIn, async function (req, res) {
+router.post("/update", isLoggedIn, async function (req, res) {
   const user = await userModel.findOneAndUpdate(
     { username: req.session.passport.user },
     { username: req.body.username, name: req.body.name, bio: req.body.bio },
@@ -151,12 +151,12 @@ router.post("https://instagramclone-1.onrender.com/update", isLoggedIn, async fu
   );
   req.login(user, function (err) {
     if (err) throw err;
-    res.redirect("https://instagramclone-1.onrender.com/profile");
+    res.redirect("/profile");
   });
 });
 
 router.post(
-  "https://instagramclone-1.onrender.com/post",
+  "/post",
   isLoggedIn,
   upload.single("image"),
   async function (req, res) {
@@ -182,12 +182,12 @@ router.post(
     }
 
     await user.save();
-    res.redirect("https://instagramclone-1.onrender.com/feed");
+    res.redirect("/feed");
   }
 );
 
 router.post(
-  "https://instagramclone-1.onrender.com/upload",
+  "/upload",
   isLoggedIn,
   upload.single("image"),
   async function (req, res) {
@@ -196,13 +196,13 @@ router.post(
     });
     user.picture = req.file.filename;
     await user.save();
-    res.redirect("https://instagramclone-1.onrender.com/edit");
+    res.redirect("/edit");
   }
 );
 
 // POST
 
-router.post("https://instagramclone-1.onrender.com/register", function (req, res) {
+router.post("/register", function (req, res) {
   const user = new userModel({
     username: req.body.username,
     email: req.body.email,
@@ -211,26 +211,26 @@ router.post("https://instagramclone-1.onrender.com/register", function (req, res
 
   userModel.register(user, req.body.password).then(function (registereduser) {
     passport.authenticate("local")(req, res, function () {
-      res.redirect("https://instagramclone-1.onrender.com/profile");
+      res.redirect("/profile");
     });
   });
 });
 
 router.post(
-  "https://instagramclone-1.onrender.com/login",
+  "/login",
   passport.authenticate("local", {
-    successRedirect: "https://instagramclone-1.onrender.com/feed",
-    failureRedirect: "https://instagramclone-1.onrender.com/login",
+    successRedirect: "/feed",
+    failureRedirect: "/login",
   }),
   function (req, res) {}
 );
 
-router.get("https://instagramclone-1.onrender.com/logout", function (req, res) {
+router.get("/logout", function (req, res) {
   req.logout(function (err) {
     if (err) {
       return next(err);
     }
-    res.redirect("https://instagramclone-1.onrender.com/login");
+    res.redirect("/login");
   });
 });
 
@@ -238,7 +238,7 @@ function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   } else {
-    res.redirect("https://instagramclone-1.onrender.com/login");
+    res.redirect("/login");
   }
 }
 
