@@ -11,6 +11,14 @@ const passport = require('passport');
 
 var app = express();
 
+const port = process.env.PORT || 10000;
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
